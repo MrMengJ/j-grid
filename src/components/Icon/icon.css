@@ -1,0 +1,21 @@
+.epros-prlist-button-tooltip {
+  box-shadow: -2px 1px 10px 0 rgba(51, 105, 205, 0.2) !important;
+}
+
+.epros-prlist-button-tooltip .bp3-popover-arrow svg path {
+  fill: #fff;
+}
+
+.epros-prlist-button-tooltip .bp3-popover-content {
+  background-color: #fff;
+  color: #000;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+@media screen and (max-width: 1930px) {
+  .epros-prlist-button-tooltip .bp3-popover-content {
+    font-size: 12px;
+  }
+}

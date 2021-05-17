@@ -50,12 +50,12 @@ async function checkStatus(response) {
  * @param {Function} onSuccess
  * @return {object}           The response data
  */
-export default function request(
+export default function request({
   url,
   options,
   isUploadFiles = false,
-  onSuccess = parseJSON
-) {
+  onSuccess = parseJSON,
+} = {}) {
   const fetchFn = () => {
     if (
       !_.isUndefined(options.body) &&

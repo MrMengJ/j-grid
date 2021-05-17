@@ -1,6 +1,11 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router';
+import { enableES5 } from 'immer';
+import 'normalize.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import '@blueprintjs/core/lib/css/blueprint.css';
 
 import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
@@ -10,18 +15,21 @@ import { GlobalStyle } from './globalStyle';
 import configureStore from './configureStore';
 import history from './utils/history';
 
+enableES5();
 const initialState = {};
 export const store = configureStore(initialState, history);
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingSpinner />}>
-          <GlobalStyle />
-          <App />
-        </Suspense>
-      </ErrorBoundary>
+      <ConnectedRouter history={history}>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingSpinner />}>
+            <GlobalStyle />
+            <App />
+          </Suspense>
+        </ErrorBoundary>
+      </ConnectedRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,0 +1,235 @@
+@import '~@ag-grid-community/all-modules/dist/styles/ag-grid.scss';
+@import '~@ag-grid-community/all-modules/dist/styles/ag-theme-alpine/sass/_ag-theme-alpine-mixin.scss';
+
+.ag-theme-custom {
+  @include ag-theme-alpine(
+    (
+           // CO
+           // main co
+      custom-active-color: var(--primary-color, #4185f3),
+      background-color: #fff,
+      foreground-color: #000,
+      border-color: #babfc7,
+      secondary-border-color: #dde2eb,
+      header-background-color: #ebf1f5,
+      subheader-background-color: ag-derived(header-background-color),
+      odd-row-background-color: ag-derived(background-color),
+      control-panel-background-color: ag-derived(background-color),
+      checkbox-checked-color: ag-derived(custom-active-color),
+      checkbox-unchecked-color: #999,
+      checkbox-background-color: ag-derived(background-color),
+      checkbox-border-radius: ag-derived(border-radius),
+      checkbox-indeterminate-color: ag-derived(custom-active-color),
+           // derived co
+      subheader-toolbar-background-color:
+        ag-derived(subheader-background-color, $opacity: 0.5),
+      selected-row-background-color:
+        var(--selected-row-background-color, rgba(65, 133, 243, 0.3)),
+      row-hover-color: var(--row-hover-color, rgba(65, 133, 243, 0.1)),
+      chip-background-color: ag-derived(foreground-color, $opacity: 0.07),
+      secondary-foreground-color: ag-derived(foreground-color),
+      input-disabled-background-color:
+        ag-derived(background-color, $mix: border-color 20%),
+      disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
+      input-border-color: ag-derived(border-color),
+      input-disabled-border-color: ag-derived(input-border-color, $opacity: 0.3),
+      header-cell-moving-background-color: ag-derived(background-color),
+      range-selection-border-color: ag-derived(custom-active-color),
+      value-change-value-highlight-background-color: rgba(#16a085, 0.5),
+           // Colour of text in grid
+      data-color: ag-derived(foreground-color),
+           // Colour of text and icons in the h
+      header-foreground-color: ag-derived(secondary-foreground-color),
+           // Background color of the overlay shown over the grid when it is covered by an overlay, e.g. a data loading indic
+      modal-overlay-background-color: ag-derived(background-color, $opacity: 0.66),
+           // Background colour of selected cell ranges. By default, setting this to a semi-transparent color (opacity of 0.1 to 0.5 works well) will generate appropriate values for the range-selection-background-color-{1..4} colours used when multiple ranges ove
+           // NOTE: if setting this value to a CSS variable, and your app supports overlapping range selections, also set range-selection-background-color-{1
+      range-selection-background-color:
+        var(--range-selection-background-color, rgba(65, 133, 243, 0.2)),
+           // These 4 parameters are used for fine-grained control over the background color used when 1, 2, 3 or 4 ranges ove
+      range-selection-background-color-2:
+        var(--range-selection-background-color-2, rgba(65, 133, 243, 0.36)),
+      range-selection-background-color-3:
+        var(--range-selection-background-color-3, rgba(65, 133, 243, 0.486)),
+      range-selection-background-color-4:
+        var(--range-selection-background-color-4, rgba(65, 133, 243, 0.5904)),
+           // Background colour to apply to a cell range when it is copied from or pasted
+      range-selection-highlight-color: ag-derived(range-selection-border-color),
+           // Rollover colour for header
+      header-cell-hover-background-color: null,
+           // Colours to apply when a value increases or decreases in an agAnimateShowChangeCellRenderer
+      value-change-delta-up-color: #43a047,
+      value-change-delta-down-color: #e53935,
+           // BO
+      borders: true,
+           // Draw the few borders that are critical to UX, e.g. between headers and
+      borders-critical: ag-derived(borders),
+           // Draw decorative borders separating UI elements within compo
+      borders-secondary: ag-derived(borders),
+      borders-side-button: false,
+      border-radius: 3px,
+      selected-tab-underline-transition-speed: 0.3s,
+      cell-horizontal-border: 1px solid ag-derived(secondary-border-color),
+           // Colour of the border between grid rows, or null to display no b
+      row-border-color: ag-derived(secondary-border-color),
+           // 单
+      header-column-resize-handle: false,
+      header-column-resize-handle-width: 4px,
+      header-column-resize-handle-height: 100%,
+           // Separator between columns in the header. Displays between all header cells For best UX, use either this or header-column-resize-handle but not
+      header-column-separator: false,
+      header-column-separator-height: 100%,
+      header-column-separator-width: 1px,
+      header-column-separator-color: ag-derived(border-color, $opacity: 0.5),
+           // S
+      grid-size: 6px,
+      icon-size: 16px,
+      row-height: ag-derived(grid-size, $times: 7),
+      header-height: ag-derived(grid-size, $times: 8),
+      list-item-height: ag-derived(grid-size, $times: 5),
+      column-select-indent-size: ag-derived(icon-size),
+      cell-horizontal-padding: ag-derived(grid-size, $times: 0),
+      cell-widget-spacing: ag-derived(grid-size, $times: 1.5),
+      widget-container-vertical-padding: ag-derived(grid-size, $times: 2),
+      widget-container-horizontal-padding: ag-derived(grid-size, $times: 2),
+      widget-horizontal-spacing: ag-derived(grid-size, $times: 2),
+      widget-vertical-spacing: ag-derived(grid-size, $times: 1.5),
+           // How much to indent child rows in the grid relative to their paren
+      row-group-indent-size: ag-derived(cell-widget-spacing, $plus: icon-size),
+           // How much to indent child columns in the filters tool panel relative to their p
+      filter-tool-panel-group-indent: 16px,
+      toggle-button-off-border-color: ag-derived(checkbox-unchecked-color),
+      toggle-button-off-background-color: ag-derived(checkbox-unchecked-color),
+      toggle-button-on-border-color: ag-derived(checkbox-checked-color),
+      toggle-button-on-background-color: ag-derived(checkbox-checked-color),
+      toggle-button-switch-background-color: ag-derived(background-color),
+      toggle-button-switch-border-color: ag-derived(toggle-button-off-border-color),
+      toggle-button-border-width: 1px,
+      toggle-button-height: 18px,
+      toggle-button-width: 28px,
+      input-focus-border-color: var(--input-focus-border-color, rgba(65, 133, 243, 0.4)),
+      input-focus-box-shadow: 0 0 2px 0.1rem ag-derived(input-focus-border-color),
+           //
+      font-family:
+        (
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          Oxygen-Sans,
+          Ubuntu,
+          Cantarell,
+          'Helvetica Neue',
+          sans-serif
+        ),
+      font-size: 14px,
+      icon-font-family: $ag-theme-alpine-icon-font-family,
+      icons-data: $ag-theme-alpine-icons-data,
+      icons-font-codes: $ag-theme-alpine-icons-font-codes,
+           //
+      selected-tab-underline-color: ag-derived(custom-active-color),
+      selected-tab-underline-width: 2px,
+      full-width-tabs: true,
+      card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4),
+           // cards are elements that float above t
+      card-radius: ag-derived(border-radius),
+      popup-shadow: ag-derived(card-shadow),
+           // CHART SET
+           // Color of border around selected chart
+      minichart-selected-chart-color: ag-derived(checkbox-checked-color),
+           // Color of dot representing selected page of chart s
+      minichart-selected-page-color: ag-derived(checkbox-checked-color),
+           // By default, color variables can be overridden at runtime by CSS variables,
+           // background-color can be overridden with the CSS var --ag-background-color. Pass
+           // to disable this behav
+      suppress-css-var-overrides: true
+    )
+  );
+
+  /*修改默认样式*/
+
+  // 单元格行高
+  .ag-cell,
+  .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    line-height: inherit;
+  }
+
+  // 自定义cellRenderer的包裹层
+  .ag-react-container {
+    height: 100%;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  // 表头单元格
+  .ag-header-group-cell,
+  .ag-header-cell {
+    border-right: 1px solid;
+    padding: 0 8px;
+    @include ag-color-property(border-right-color, border-color);
+  }
+
+  // 表头单元格文字水平居中显示
+  .ag-header-group-cell-label,
+  .ag-header-cell-label {
+    justify-content: center;
+  }
+
+  .ag-ltr {
+    // 行
+    .ag-row {
+      font-size: ag-param(font-size);
+    }
+
+    // 跨整行的group
+    .ag-row.ag-full-width-row .ag-cell-wrapper.ag-row-group {
+      padding: 0 8px;
+    }
+
+    // 单元格
+    .ag-row .ag-cell {
+      display: flex;
+      align-items: center; // 内容垂直居中对齐
+      white-space: normal;
+    }
+
+    .ag-cell-range-single-cell,
+    .ag-cell-range-single-cell.ag-cell-range-handle {
+      border-right-color: ag-param(range-selection-border-color);
+    }
+  }
+
+  // 编辑状态高度为单元格的高度
+  .ag-cell-inline-editing {
+    height: 100% !important;
+  }
+
+  // checkbox阴影
+  .ag-wrapper.ag-input-wrapper.ag-checkbox-input-wrapper {
+    box-shadow: none;
+  }
+
+  // 一些按钮hover颜色
+  .ag-header-cell-menu-button:hover,
+  .ag-side-button-button:hover,
+  .ag-tab:hover,
+  .ag-panel-title-bar-button:hover,
+  .ag-header-expand-icon:hover,
+  .ag-column-group-icons:hover,
+  .ag-group-expanded .ag-icon:hover,
+  .ag-group-contracted .ag-icon:hover,
+  .ag-chart-settings-prev:hover,
+  .ag-chart-settings-next:hover,
+  .ag-group-title-bar-icon:hover,
+  .ag-column-select-header-icon:hover,
+  .ag-floating-filter-button-button:hover,
+  .ag-filter-toolpanel-expand:hover,
+  .ag-chart-menu-icon:hover {
+    color: ag-param(custom-active-color);
+  }
+
+  // tab项被选中时的颜色
+  .ag-tab-selected {
+    color: ag-param(custom-active-color);
+  }
+}
