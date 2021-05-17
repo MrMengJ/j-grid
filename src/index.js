@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { Provider } from 'react-redux';
+
+import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
+import LoadingSpinner from './components/Loading/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
+import { GlobalStyle } from './globalStyle';
+import configureStore from './configureStore';
+import history from './utils/history';
+
+const initialState = {};
+export const store = configureStore(initialState, history);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingSpinner />}>
+          <GlobalStyle />
+          <App />
+        </Suspense>
+      </ErrorBoundary>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
