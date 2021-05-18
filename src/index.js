@@ -20,18 +20,16 @@ const initialState = {};
 export const store = configureStore(initialState, history);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingSpinner />}>
-            <GlobalStyle />
-            <App />
-          </Suspense>
-        </ErrorBoundary>
-      </ConnectedRouter>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingSpinner />}>
+          <GlobalStyle />
+          <App />
+        </Suspense>
+      </ErrorBoundary>
+    </ConnectedRouter>
+  </Provider>,
   document.getElementById('root')
 );
 
