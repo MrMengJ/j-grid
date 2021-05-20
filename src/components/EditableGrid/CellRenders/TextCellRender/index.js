@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   position: relative;
   height: 100%;
   padding: 0 8px;
+  ${(props) => (props.keepWrapping ? `white-space: pre-wrap;` : '')}
 `;
 
 class TextCellRender extends Component {
@@ -31,19 +32,25 @@ class TextCellRender extends Component {
   }
 
   render() {
-    const { align } = this.props;
+    const { align, keepWrapping } = this.props;
     const { value } = this.state;
     const text = get(value, 'value', '');
-    return <Wrapper align={align}>{isString(text) ? text : ''}</Wrapper>;
+    return (
+      <Wrapper align={align} keepWrapping={keepWrapping}>
+        {isString(text) ? text : ''}
+      </Wrapper>
+    );
   }
 }
 
 TextCellRender.propTypes = {
   value: PropTypes.any,
+  keepWrapping: PropTypes.bool, // 文字是否保持换行
 };
 
 TextCellRender.defaultProps = {
   value: {},
+  keepWrapping: false,
 };
 
 export default TextCellRender;
