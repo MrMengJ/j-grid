@@ -159,7 +159,7 @@ export const getNestedColumns = (flatArr) => {
   const attachChildren = (data, flatArr) => {
     if (existChild(data, flatArr)) {
       data.children = getChildren(data, flatArr);
-      // data.marryChildren = false;
+      data.marryChildren = true;
       forEach(data.children, (item) => {
         attachChildren(item, flatArr);
       });
