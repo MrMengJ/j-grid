@@ -242,7 +242,7 @@ class EditableGrid extends Component {
           cellRendererParams: {
             ...commonCellRendererParams,
           },
-          cellEditor: 'approvalPointCellEditor',
+          // cellEditor: 'approvalPointCellEditor',
           cellEditorParams: {
             ...this.props.approvalPointCellEditorParams,
           },
@@ -272,7 +272,7 @@ class EditableGrid extends Component {
           cellRendererParams: {
             ...commonCellRendererParams,
           },
-          cellEditor: 'authTagCellEditor',
+          // cellEditor: 'authTagCellEditor',
           cellEditorParams: {},
         };
       }
@@ -285,7 +285,7 @@ class EditableGrid extends Component {
           cellRendererParams: {
             ...commonCellRendererParams,
           },
-          cellEditor: 'organizationCellEditor',
+          // cellEditor: 'organizationCellEditor',
           cellEditorParams: {},
         };
       }
