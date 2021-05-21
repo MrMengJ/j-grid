@@ -56,7 +56,13 @@ import { getRGBA } from '../../../utils/style';
 
 import Filter from './components/Filter';
 import HeaderSetting from './components/HeaderSetting';
-import { arr2ObjByKey, produceCommonColOptions, produceRowData } from './helper';
+import {
+  arr2ObjByKey,
+  getPrFunctionRowData,
+  produceCommonColOptions,
+  producePath,
+  produceRowData,
+} from './helper';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -1221,6 +1227,20 @@ class PrListGrid extends Component {
     }
   };
 
+  producePrFunctionColDef = () => {
+    const prFunctionCol = {
+      parentId: '0',
+      id: 'prFunction',
+      field: 'prFunction',
+      colId: 'prFunction',
+      name: '所属职能',
+    };
+    return {
+      ...prFunctionCol,
+      rowGroup: true,
+    };
+  };
+
   render() {
     const {
       columnDefs,
@@ -1234,11 +1254,22 @@ class PrListGrid extends Component {
     const columnChangeList = get(getColumnChangeStorage(), prListId, {});
     const transformedColumnDefs = this.attachChildPrNameCols(
       this.transformColumns({
-        columns: columnDefs,
+        columns: [...columnDefs, this.producePrFunctionColDef()],
         hidedColIds,
         columnChangeList,
       })
     );
+    const transformedRowData = map(rowData, (item) => {
+      const prFunction = isEmpty(prFunctions)
+        ? {}
+        : getPrFunctionRowData(rowData, item, prFunctions);
+      const pathArray = producePath(prFunction, prFunctions);
+      const value = map(pathArray, (item) => get(item, 'name', '')).join(' - ');
+      return {
+        prFunction: value,
+        ...item,
+      };
+    });
 
     return (
       <Wrapper>
@@ -1256,7 +1287,7 @@ class PrListGrid extends Component {
             <GridContainer>
               <EditableGrid
                 columnDefs={transformedColumnDefs}
-                rowData={rowData}
+                rowData={transformedRowData}
                 prFunctions={prFunctions}
                 gridOptions={{}}
                 approvalPointCellEditorParams={{

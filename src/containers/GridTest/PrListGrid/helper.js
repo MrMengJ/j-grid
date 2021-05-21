@@ -2,9 +2,12 @@ import { v4 } from 'uuid';
 import {
   cloneDeep,
   filter,
+  find,
   findIndex,
   forEach,
+  get,
   has,
+  isNil,
   lowerCase,
   map,
   sortBy,
@@ -132,4 +135,54 @@ export const arr2ObjByKey = (arr, key) => {
     result[item[key]] = item;
   });
   return result;
+};
+
+export const getPrFunctionRowData = (allRowData, self, prFunctions) => {
+  const rootAncestor = getRootAncestor(allRowData, self);
+  return rootAncestor
+    ? findChildPrFunctionById(rootAncestor.parentId, prFunctions)
+    : findChildPrFunctionById(self.parentId, prFunctions);
+};
+
+const getRootAncestor = (allData, self) => {
+  const selfIsRootPr = isRootPr(self);
+  if (isNil(self) || selfIsRootPr) {
+    return;
+  }
+  const selfParent = find(allData, (item) => {
+    return item.id === self.parentId;
+  });
+  if (isRootPr(selfParent)) {
+    return selfParent;
+  } else {
+    return getRootAncestor(allData, selfParent);
+  }
+};
+
+const isRootPr = (item) => {
+  return get(item, 'parentType') === 'FUNCTION';
+};
+
+const findChildPrFunctionById = (id, prFunctions) => {
+  return findPrFunctionById(prFunctions, id);
+};
+
+const findPrFunctionById = (prFunctions, id) => {
+  return find(prFunctions, (item) => {
+    return item.id === id;
+  });
+};
+
+export const producePath = (self, allPrFunctions) => {
+  const pathArray = [self];
+  const producePathArray = (self, allPrFunctions, result = []) => {
+    const parent = find(allPrFunctions, (item) => item.id === self.parentId);
+    if (parent) {
+      result.unshift(parent);
+      producePathArray(parent, allPrFunctions);
+    }
+  };
+  producePathArray(self, allPrFunctions, pathArray);
+
+  return pathArray;
 };

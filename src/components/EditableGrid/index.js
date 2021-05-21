@@ -21,6 +21,7 @@ import {
   map,
   noop,
   size,
+  isEmpty,
 } from 'lodash';
 
 import { bound } from '../../utils/object';
@@ -47,7 +48,7 @@ import TextAreaCellEditor from './CellEditors/TextAreaCellEditor';
 import OrderCellRender from './CellRenders/OrderCellRender';
 import SelectorCellRender from './CellRenders/SelectorCellRender';
 import PrNameCellRender from './CellRenders/PrNameCellRender';
-import PrFunctionGroupCellRender from './CellRenders/PrFunctionGroupCellRender';
+import GroupCellRender from './CellRenders/GroupCellRender';
 import CommonCellRender from './CellRenders/CommonCellRender';
 import NumberCellRender from './CellRenders/NumberCellRender';
 import EnumCellRender from './CellRenders/EnumCellRender';
@@ -92,16 +93,6 @@ const selectorCol = {
   checkboxSelection: true,
   filter: false,
   lockPosition: true,
-};
-
-const prFunctionCol = {
-  parentId: '0',
-  id: 'prFunction',
-  field: 'prFunction',
-  colId: 'prFunction',
-  name: '所属职能',
-  hide: true,
-  filter: false,
 };
 
 const gridStaticOptions = {
@@ -370,33 +361,11 @@ class EditableGrid extends Component {
       : null;
   });
 
-  producePrFunctionColDef = memoizeOne((groupedByPrFunction) => {
-    return groupedByPrFunction
-      ? {
-          ...prFunctionCol,
-          rowGroup: true,
-          keyCreator: (params) =>
-            map(get(params, 'value.pathArray', []), (item) => get(item, 'name', '')).join(
-              ' - '
-            ),
-        }
-      : null;
-  });
-
-  produceColumnDefs = memoizeOne(
-    ({ columns, orderColOptions, selectorColOptions, prFunctionColOptions }) => {
-      const newOrderOptions = orderColOptions ? [orderColOptions] : [];
-      const newSelectorColOptions = selectorColOptions ? [selectorColOptions] : [];
-      const newPrFunctionColOptions = prFunctionColOptions ? [prFunctionColOptions] : [];
-      return getNestedColumns([
-        ...newOrderOptions,
-        ...newSelectorColOptions,
-        ...newPrFunctionColOptions,
-        ...columns,
-      ]);
-    },
-    isEqual
-  );
+  produceColumnDefs = memoizeOne(({ columns, orderColOptions, selectorColOptions }) => {
+    const newOrderOptions = orderColOptions ? [orderColOptions] : [];
+    const newSelectorColOptions = selectorColOptions ? [selectorColOptions] : [];
+    return getNestedColumns([...newOrderOptions, ...newSelectorColOptions, ...columns]);
+  }, isEqual);
 
   handleHeaderMouseDown = () => {
     this.originalColumns = map(this.columnApi.getAllGridColumns(), (item) => ({
@@ -723,10 +692,18 @@ class EditableGrid extends Component {
     const newRowData = getCurrentRowData(this.gridApi);
     const movingNodeIndex = findIndex(newRowData, (item) => item.id === movingData.id);
     const overNodeIndex = findIndex(newRowData, (item) => item.id === overData.id);
-    const groupPrFunction = overNode.data.prFunction;
-    if (groupPrFunction) {
-      movingData.prFunction = groupPrFunction;
-      movingData.parentId = groupPrFunction.id;
+    const { columnDefs } = this.props;
+    const rowGroupColIds = map(
+      filter(columnDefs, (item) => item.rowGroup),
+      (item) => item.id
+    );
+    if (!isEmpty(rowGroupColIds)) {
+      forEach(rowGroupColIds, (item) => {
+        const groupFieldValue = get(overNode.data, item);
+        if (groupFieldValue) {
+          movingData[item] = groupFieldValue;
+        }
+      });
     }
     moveInArray(newRowData, movingNodeIndex, overNodeIndex);
 
@@ -736,7 +713,6 @@ class EditableGrid extends Component {
     gridApi.setRowData(
       produceRowData({
         rowData: newRowData,
-        prFunctions: this.props.prFunctions,
       })
     );
   };
@@ -857,24 +833,19 @@ class EditableGrid extends Component {
     const {
       defaultColDef,
       showSelectorCol,
-      groupedByPrFunction,
-      prFunctions,
       gridOptions,
       onCellClicked,
       onCellDoubleClicked,
     } = this.props;
     const selectorColDef = this.produceSelectorColDef(showSelectorCol);
-    const prFunctionColDef = this.producePrFunctionColDef(groupedByPrFunction);
     const orderColDef = this.produceOrderColDef();
     this.columnDefs = this.produceColumnDefs({
       columns: this.produceOriginalColumns(this.props.columnDefs),
       orderColOptions: orderColDef,
       selectorColOptions: selectorColDef,
-      prFunctionColOptions: prFunctionColDef,
     });
     const rowData = produceRowData({
       rowData: this.props.rowData,
-      prFunctions,
     });
 
     return (
@@ -903,7 +874,7 @@ class EditableGrid extends Component {
             ...defaultColDef,
           }}
           frameworkComponents={{
-            prFunctionGroupCellRenderer: PrFunctionGroupCellRender,
+            groupCellRenderer: GroupCellRender,
             selectorCellRenderer: SelectorCellRender,
             orderCellRenderer: OrderCellRender,
             prNameCellRenderer: PrNameCellRender,
@@ -924,7 +895,7 @@ class EditableGrid extends Component {
             // organizationCellEditor: OrganizationCellEditor,
           }}
           groupRowRendererParams={{
-            innerRenderer: 'prFunctionGroupCellRenderer',
+            innerRenderer: 'groupCellRenderer',
             suppressCount: true,
           }}
           onCellMouseOver={this.handleCellMouseOver}
@@ -961,7 +932,6 @@ EditableGrid.propTypes = {
     })
   ), // 列配置项
   rowData: PropTypes.array, // 表格数据
-  prFunctions: PropTypes.array, // 所有"职能"
   onGridReady: PropTypes.func, // grid初始化回调事件
   onCellMouseOver: PropTypes.func, // mouse over event
   onCellMouseOut: PropTypes.func, // mouse out event
@@ -972,7 +942,6 @@ EditableGrid.propTypes = {
   onRowDragEnd: PropTypes.func, // row drag end event
   defaultColDef: PropTypes.object, // "列"默认配置
   showSelectorCol: PropTypes.bool, // 是否显示"序号"列
-  groupedByPrFunction: PropTypes.bool, // 是否以"职能"分组
   rowDragAble: PropTypes.bool, // 是否可以拖动行以更改顺序
   gridOptions: PropTypes.object, // 一些"开关"选项
   onRowHeightChanged: PropTypes.func, // 改变行高回调
@@ -993,11 +962,10 @@ EditableGrid.propTypes = {
       name: PropTypes.string,
       action: PropTypes.func,
     })
-  ),
+  ), // 拓展的右键菜单项
 };
 
 EditableGrid.defaultProps = {
-  prFunctions: [],
   onGridReady: noop,
   onCellMouseOver: noop,
   onCellMouseOut: noop,
@@ -1009,7 +977,6 @@ EditableGrid.defaultProps = {
   defaultColDef: {},
   gridOptions: {},
   showSelectorCol: true,
-  groupedByPrFunction: true,
   rowDragAble: true,
   onRowHeightChanged: noop,
   onAddRow: noop,

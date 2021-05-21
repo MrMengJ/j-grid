@@ -6,7 +6,7 @@ const Wrapper = styled.div`
   font-weight: 600;
 `;
 
-class PrFunctionGroupCellRender extends Component {
+class GroupCellRender extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,8 +28,8 @@ class PrFunctionGroupCellRender extends Component {
   }
 }
 
-PrFunctionGroupCellRender.propTypes = {
+GroupCellRender.propTypes = {
   value: PropTypes.string,
 };
 
-export default PrFunctionGroupCellRender;
+export default GroupCellRender;

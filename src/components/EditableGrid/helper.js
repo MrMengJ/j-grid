@@ -18,23 +18,6 @@ import { ACTION_TYPE, CELL_VALUE_TYPE } from './constants';
 
 export const getRowDefaultHeight = () => 48;
 
-export const getChildPrFunctions = (allPrFunctions) => {
-  return filter(allPrFunctions, (item) => {
-    const { parentId } = item;
-    return parentId !== '0';
-  });
-};
-
-const findPrFunctionById = (prFunctions, id) => {
-  return find(prFunctions, (item) => {
-    return item.id === id;
-  });
-};
-
-const findChildPrFunctionById = (id, prFunctions) => {
-  return findPrFunctionById(prFunctions, id);
-};
-
 const isRootPr = (item) => {
   return get(item, 'parentType') === 'FUNCTION';
 };
@@ -54,39 +37,14 @@ const getRootAncestor = (allData, self) => {
   }
 };
 
-const getPrFunctionRowData = (allRowData, self, prFunctions) => {
-  const rootAncestor = getRootAncestor(allRowData, self);
-  return rootAncestor
-    ? findChildPrFunctionById(rootAncestor.parentId, prFunctions)
-    : findChildPrFunctionById(self.parentId, prFunctions);
-};
-
-const producePath = (self, allPrFunctions) => {
-  const pathArray = [self];
-  const producePathArray = (self, allPrFunctions, result = []) => {
-    const parent = find(allPrFunctions, (item) => item.id === self.parentId);
-    if (parent) {
-      result.unshift(parent);
-      producePathArray(parent, allPrFunctions);
-    }
-  };
-  producePathArray(self, allPrFunctions, pathArray);
-
-  return pathArray;
-};
-
-export const produceRowData = memoizeOne(({ rowData, prFunctions }) => {
+export const produceRowData = memoizeOne(({ rowData }) => {
   return isNull(rowData)
     ? null
     : map(rowData, (item, index) => {
-        const prFunction = isEmpty(prFunctions)
-          ? null
-          : getPrFunctionRowData(rowData, item, prFunctions);
         return {
           height:
             !isNil(item.height) && item.height >= 0 ? item.height : getRowDefaultHeight(),
           ...item,
-          prFunction: { ...prFunction, pathArray: producePath(prFunction, prFunctions) },
           index,
         };
       });
