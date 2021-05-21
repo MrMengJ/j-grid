@@ -528,11 +528,13 @@ class EditableGrid extends Component {
       name: '向下插入行',
       action: () => this.handleInsertRowDown(data),
     };
-    const exportAsExcel = {
-      name: '导出为Excel',
-      action: this.props.onExportAsExcel,
-    };
-    return [...defaultItems, addNewRow, addSubRow, deleteColOrRow, exportAsExcel];
+    return [
+      ...defaultItems,
+      addNewRow,
+      addSubRow,
+      deleteColOrRow,
+      ...this.props.extendedContextMenuItems,
+    ];
   };
 
   getCellStyle = (params) => {
@@ -980,13 +982,18 @@ EditableGrid.propTypes = {
   onMoveCol: PropTypes.func, //移动列回调
   onCellValueChanged: PropTypes.func, // 单元格数据发生改变的回调
   onRowSelect: PropTypes.func, // 行选择回调
-  onExportAsExcel: PropTypes.func, // 导出为excel回调
   shouldMarkDataStatus: PropTypes.bool, // 是否显示数据状态 "增"、"删"、"改"
   highlightText: PropTypes.string, // 需要高亮的文本
   redoCallBack: PropTypes.func, //重做回调
   undoCallBack: PropTypes.func, //撤销回调
   approvalPointCellEditorParams: PropTypes.object, // 审批点编辑态参数,
   controlSelf: PropTypes.bool, // 是否由grid自己控制数据的变化
+  extendedContextMenuItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      action: PropTypes.func,
+    })
+  ),
 };
 
 EditableGrid.defaultProps = {
@@ -1011,13 +1018,13 @@ EditableGrid.defaultProps = {
   onMoveCol: noop,
   onCellValueChanged: noop,
   onRowSelect: noop,
-  onExportAsExcel: noop,
   redoCallBack: noop,
   undoCallBack: noop,
   shouldMarkDataStatus: false,
   highlightText: '',
   approvalPointCellEditorParams: {},
   controlSelf: false,
+  extendedContextMenuItems: [],
 };
 
 export default EditableGrid;
