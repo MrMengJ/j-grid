@@ -548,33 +548,7 @@ class EditableGrid extends Component {
 
   //  handle object value
   handleProcessCellFromClipboard = (params) => {
-    const {
-      value,
-      column: { colDef },
-      node: { data },
-    } = params;
-    const { colId, valueType } = colDef;
-
-    // prName项特殊处理,id使用被粘贴单元格的原值
-    if (getIsPrName(valueType)) {
-      const id = get(data, `${colId}.id`, '');
-      try {
-        const valueObj = JSON.parse(value);
-        const pasteValue = get(valueObj, 'value');
-        if (!pasteValue) {
-          // 粘贴值如果为空，则粘贴"原始值"，相当于没改变
-          return get(data, colId);
-        }
-        return { ...valueObj, id };
-      } catch (e) {
-        if (value) {
-          return { value, id };
-        }
-        // 粘贴值如果为空，则粘贴"原始值"，相当于没改变
-        return get(data, colId);
-      }
-    }
-
+    const { value } = params;
     try {
       return JSON.parse(value);
     } catch (e) {
