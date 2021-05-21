@@ -7,12 +7,10 @@ import memoizeOne from 'memoize-one';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AllCommunityModules, ModuleRegistry } from '@ag-grid-community/all-modules';
 import { AllEnterpriseModules } from '@ag-grid-enterprise/all-modules';
-import { v4 } from 'uuid';
 import {
   cloneDeep,
   filter,
   findIndex,
-  findLastIndex,
   forEach,
   get,
   head,
@@ -41,7 +39,6 @@ import {
   getCurrentRowData,
   getIsPrName,
   getNestedColumns,
-  getPrNameColId,
   getRowDefaultHeight,
   moveInArray,
   produceRowData,
@@ -524,12 +521,12 @@ class EditableGrid extends Component {
       ],
     };
     const addNewRow = {
-      name: '添加新事项',
-      action: () => this.handleAddNewRow(data),
+      name: '向上插入行',
+      action: () => this.handleInsertRowUp(data),
     };
     const addSubRow = {
-      name: '添加子事项',
-      action: () => this.handleAddSubRow(data),
+      name: '向下插入行',
+      action: () => this.handleInsertRowDown(data),
     };
     const exportAsExcel = {
       name: '导出为Excel',
@@ -809,69 +806,27 @@ class EditableGrid extends Component {
     });
   };
 
-  handleAddNewRow = (data) => {
-    const levelTwoPrNameColId = getPrNameColId(2);
+  handleInsertRowUp = (data) => {
     const allRowData = getCurrentRowData(this.gridApi);
-    if (!get(data[levelTwoPrNameColId], 'value')) {
-      // 直接添在当前行下面
-      const matchedIndex = findIndex(allRowData, (item) => item.id === data.id);
-      if (matchedIndex > -1) {
-        const addedRow = copyRow(data, true);
-        this.handleAddRow({
-          add: addedRow,
-          addIndex: matchedIndex + 1,
-        });
-      }
-    } else {
-      // 为了避免同父事项下面子事项的分层，将新增的事项添在父事项行下面
-      const levelOnePrNameColId = getPrNameColId(1);
-      const id = get(data[levelOnePrNameColId], 'id');
-      if (id) {
-        const matchedIndex = findLastIndex(allRowData, (item) => {
-          return get(item[levelOnePrNameColId], 'id') === id;
-        });
-        if (matchedIndex > -1) {
-          const addedRow = copyRow(data, true);
-          this.handleAddRow({
-            add: addedRow,
-            addIndex: matchedIndex + 1,
-          });
-        }
-      }
+    const matchedIndex = findIndex(allRowData, (item) => item.id === data.id);
+    if (matchedIndex > -1) {
+      const addedRow = copyRow(data, true);
+      this.handleAddRow({
+        add: addedRow,
+        addIndex: matchedIndex,
+      });
     }
   };
 
-  handleAddSubRow = (data) => {
-    const levelTwoPrNameColId = getPrNameColId(2);
+  handleInsertRowDown = (data) => {
     const allRowData = getCurrentRowData(this.gridApi);
-    if (!get(data[levelTwoPrNameColId], 'value')) {
-      const matchedIndex = findIndex(allRowData, (item) => item.id === data.id);
-      if (matchedIndex > -1) {
-        const newId = v4();
-        const addedRow = {
-          ...copyRow(data, true),
-          sortId: data.sortId,
-          id: newId,
-          [levelTwoPrNameColId]: {
-            id: newId,
-            value: '新增事项',
-          },
-        };
-        this.props.onAddRow({ add: addedRow, addIndex: matchedIndex, isReplace: true });
-        this.dispatchRowChangeAction(
-          { add: addedRow, addIndex: matchedIndex, removed: data },
-          ROW_CHANGE_TYPE.REPLACE
-        );
-      }
-    } else {
-      const matchedIndex = findIndex(allRowData, (item) => item.id === data.id);
-      if (matchedIndex > -1) {
-        const addedRow = copyRow(data, true);
-        this.handleAddRow({
-          add: addedRow,
-          addIndex: matchedIndex + 1,
-        });
-      }
+    const matchedIndex = findIndex(allRowData, (item) => item.id === data.id);
+    if (matchedIndex > -1) {
+      const addedRow = copyRow(data, true);
+      this.handleAddRow({
+        add: addedRow,
+        addIndex: matchedIndex + 1,
+      });
     }
   };
 

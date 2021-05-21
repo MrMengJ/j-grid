@@ -239,12 +239,3 @@ export const getColumnWidth = (column) => {
 export const getIsPrName = (valueType) => {
   return valueType === CELL_VALUE_TYPE.PR_NAME;
 };
-
-/**
- * 获取对应层级的事项列id
- * @param level prName层级
- * @return {string}
- */
-export const getPrNameColId = (level) => {
-  return `prName-${level}`;
-};

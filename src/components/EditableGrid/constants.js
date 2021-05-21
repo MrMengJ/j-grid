@@ -312,7 +312,6 @@ export const ROW_CHANGE_TYPE = {
   ADD: 'add',
   REMOVE: 'remove',
   UPDATE: 'update',
-  REPLACE: 'replace',
 };
 
 export const KeyCode = {

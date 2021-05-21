@@ -106,21 +106,6 @@ export const getProcessAction = function (_this_) {
               remove: removedRows,
             });
           }
-        } else if (cellValueChange.type === ROW_CHANGE_TYPE.REPLACE) {
-          const { oldValue, newValue, index } = cellValueChange;
-          if (processActionType === ProcessActionType.UNDO) {
-            this.gridApi.applyTransactionAsync({
-              remove: [newValue],
-              add: [oldValue],
-              addIndex: index,
-            });
-          } else if (processActionType === ProcessActionType.REDO) {
-            this.gridApi.applyTransactionAsync({
-              remove: [oldValue],
-              add: [newValue],
-              addIndex: index,
-            });
-          }
         } else {
           //todo process update
         }

@@ -891,44 +891,36 @@ class PrListGrid extends Component {
   };
 
   handleAddRow = (options) => {
-    const { add, addIndex, needReorderedRowData, isReplace } = options;
-    if (!isReplace) {
-      const newRowData = cloneDeep(this.state.rowData);
-      //添加行
-      newRowData.splice(addIndex, 0, add);
-      // 更新受影响的行的sortId
-      forEach(newRowData, (item1) => {
-        // 如果没有需要重新设置sortId的行，则跳出循环
-        if (isEmpty(needReorderedRowData)) {
-          return false;
-        }
-        const matchedItem = find(needReorderedRowData, (item2) => item1.id === item2.id);
-        if (matchedItem) {
-          item1.sortId = matchedItem.sortId;
-        }
-      });
-      this.setState({ rowData: newRowData });
-      this.updateModifications(OPERATION_TYPE.add, [add]);
-      const updated = map(needReorderedRowData, (item) => {
-        const { id, sortId } = item;
-        return {
-          rowId: id,
-          modifications: [
-            {
-              field: 'sortId',
-              newValue: sortId,
-            },
-          ],
-        };
-      });
-      this.updateModifications(OPERATION_TYPE.update, updated);
-    } else {
-      const newRowData = cloneDeep(this.state.rowData);
-      //添加行
-      newRowData.splice(addIndex, 1, add);
-      this.setState({ rowData: newRowData });
-      this.updateModifications(OPERATION_TYPE.add, [add]);
-    }
+    const { add, addIndex, needReorderedRowData } = options;
+    const newRowData = cloneDeep(this.state.rowData);
+    //添加行
+    newRowData.splice(addIndex, 0, add);
+    // 更新受影响的行的sortId
+    forEach(newRowData, (item1) => {
+      // 如果没有需要重新设置sortId的行，则跳出循环
+      if (isEmpty(needReorderedRowData)) {
+        return false;
+      }
+      const matchedItem = find(needReorderedRowData, (item2) => item1.id === item2.id);
+      if (matchedItem) {
+        item1.sortId = matchedItem.sortId;
+      }
+    });
+    this.setState({ rowData: newRowData });
+    this.updateModifications(OPERATION_TYPE.add, [add]);
+    const updated = map(needReorderedRowData, (item) => {
+      const { id, sortId } = item;
+      return {
+        rowId: id,
+        modifications: [
+          {
+            field: 'sortId',
+            newValue: sortId,
+          },
+        ],
+      };
+    });
+    this.updateModifications(OPERATION_TYPE.update, updated);
   };
 
   handleRecoverRow = (options) => {
@@ -1001,19 +993,6 @@ class PrListGrid extends Component {
           } else if (processActionType === ProcessActionType.REDO) {
             const removedRows = map(oldValue, (item) => item.row);
             this.handleRemoveRows(removedRows);
-          }
-        } else if (cellValueChange.type === ROW_CHANGE_TYPE.REPLACE) {
-          const { oldValue, newValue, index } = cellValueChange;
-          if (processActionType === ProcessActionType.UNDO) {
-            const newRowData = cloneDeep(this.state.rowData);
-            newRowData.splice(index, 1, oldValue);
-            this.setState({ rowData: newRowData });
-            this.updateModifications(OPERATION_TYPE.remove, [newValue]);
-          } else if (processActionType === ProcessActionType.REDO) {
-            const newRowData = cloneDeep(this.state.rowData);
-            newRowData.splice(index, 1, newValue);
-            this.setState({ rowData: newRowData });
-            this.updateModifications(OPERATION_TYPE.add, [newValue]);
           }
         } else {
           //todo handle row update

@@ -98,16 +98,6 @@ DispatchUndoRedoAction.dispatchRowChangeAction = function (options, type) {
     action = new RowChangeAction([
       { type: ROW_CHANGE_TYPE.REMOVE, oldValue: options, newValue: null },
     ]);
-  } else if (type === ROW_CHANGE_TYPE.REPLACE) {
-    const { add, addIndex, removed } = options;
-    action = new RowChangeAction([
-      {
-        type: ROW_CHANGE_TYPE.REPLACE,
-        oldValue: removed,
-        newValue: add,
-        index: addIndex,
-      },
-    ]);
   } else {
     //todo handle rowChange
   }
