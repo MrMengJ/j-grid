@@ -47,7 +47,6 @@ import {
 } from '../../../components/EditableGrid/UndoRedoService/UndoRedoAction';
 import { getCurrentRowData } from '../../../components/EditableGrid/helper';
 import {
-  CELL_VALUE_TYPE,
   ProcessActionType,
   ROW_CHANGE_TYPE,
 } from '../../../components/EditableGrid/constants';
@@ -1110,58 +1109,21 @@ class PrListGrid extends Component {
 
   handleCellValueChanged = (params) => {
     const { colDef, data, oldValue, newValue } = params;
-    const { valueType, colId } = colDef;
-    if (valueType === CELL_VALUE_TYPE.PR_NAME) {
-      const { id } = newValue;
-      const getNeedUpdatedRows = () => {
-        const currentRowData = getCurrentRowData(this.gridApi);
-        const result = [];
-        forEach(currentRowData, (item) => {
-          if (get(item, `${colId}.id`) === id) {
-            result.push({ ...item, [colId]: { id, value: newValue.value } });
-          }
-        });
-        return result;
-      };
-      const needUpdatedRows = getNeedUpdatedRows();
-      // 使用 applyTransaction update 一次性更新所有相关的工作事项所在列，因为使用setDataValue会导致onCellValueChanged再次被触发
-      this.gridApi.applyTransaction({
-        update: needUpdatedRows,
-      });
-      // 更新state
-      const newRowData = getCurrentRowData(this.gridApi);
-      this.setState({ rowData: newRowData });
-
-      // 更新 modifications
-      const updated = map(needUpdatedRows, (item) => {
-        return {
-          rowId: item.id,
-          modifications: [
-            {
-              field: [colId],
-              newValue: item[colId],
-            },
-          ],
-        };
-      });
-      this.updateModifications(OPERATION_TYPE.update, updated);
-    } else {
-      const newRowData = getCurrentRowData(this.gridApi);
-      this.setState({ rowData: newRowData });
-      const updated = [
-        {
-          rowId: data.id,
-          modifications: [
-            {
-              field: colDef.id,
-              oldValue,
-              newValue,
-            },
-          ],
-        },
-      ];
-      this.updateModifications(OPERATION_TYPE.update, updated);
-    }
+    const newRowData = getCurrentRowData(this.gridApi);
+    this.setState({ rowData: newRowData });
+    const updated = [
+      {
+        rowId: data.id,
+        modifications: [
+          {
+            field: colDef.id,
+            oldValue,
+            newValue,
+          },
+        ],
+      },
+    ];
+    this.updateModifications(OPERATION_TYPE.update, updated);
   };
 
   handleRowSelect = (params) => {
