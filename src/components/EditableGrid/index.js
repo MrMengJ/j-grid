@@ -148,11 +148,6 @@ class EditableGrid extends Component {
           cellEditor: 'prNameCellEditor',
           cellEditorParams: {},
           cellStyle: { padding: 0 },
-          editable: (params) => {
-            const { column, data } = params;
-            const { colId } = column;
-            return !!get(data, colId);
-          },
         };
       }
 
